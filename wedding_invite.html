@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¡Nos Casamos! Natalia & Javier</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;1,400;1,500&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: #d6d6d6;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 30px 16px;
+    font-family: 'Lora', serif;
+  }
+
+  .outer {
+    max-width: 480px;
+    width: 100%;
+    position: relative;
+  }
+
+  /* Background bleed photo effect (blurred bg) */
+  .bg-blur {
+    position: fixed;
+    inset: 0;
+    background: #b8b8b8;
+    z-index: 0;
+  }
+
+  .card {
+    background: #f7f4ef;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.18);
+  }
+
+  /* Header */
+  .card-header {
+    padding: 36px 36px 20px;
+    text-align: center;
+    background: #f7f4ef;
+  }
+
+  .nos-casamos {
+    font-family: 'Playfair Display', serif;
+    font-size: 46px;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: 1px;
+    line-height: 1.1;
+  }
+
+  /* Photo area */
+  .photo-wrap {
+    margin: 0 32px;
+    position: relative;
+    background: #ccc;
+    cursor: pointer;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+  }
+
+  .photo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(20%);
+  }
+
+  .photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #ddd;
+    gap: 10px;
+    color: #888;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-align: center;
+    padding: 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .photo-placeholder:hover { background: #ccc; }
+  .photo-placeholder .ph-icon { font-size: 36px; opacity: 0.5; }
+  .photo-placeholder .ph-text { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; }
+
+  #fileInput { display: none; }
+
+  .change-photo-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 9px;
+    cursor: pointer;
+    border-radius: 1px;
+    display: none;
+  }
+  .change-photo-btn:hover { background: rgba(0,0,0,0.75); }
+
+  /* Body text */
+  .card-body {
+    padding: 22px 36px 10px;
+    text-align: center;
+  }
+
+  .invite-text {
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: #222;
+    line-height: 1.55;
+    margin-bottom: 18px;
+  }
+
+  .divider-floral {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 0 14px;
+    color: #999;
+    font-size: 13px;
+  }
+  .divider-floral::before,
+  .divider-floral::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #ccc;
+  }
+
+  .date-venue {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: #222;
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .date-venue strong {
+    font-weight: 400;
+    font-style: normal;
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+  }
+
+  .small-note {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: #777;
+    margin-bottom: 6px;
+  }
+
+  /* Floral decoration */
+  .floral-corner {
+    text-align: right;
+    padding: 0 28px 4px 0;
+    font-size: 28px;
+    line-height: 1;
+    opacity: 0.65;
+  }
+
+  /* RSVP */
+  .rsvp-wrap {
+    border-top: 1px solid #ddd;
+    background: #f0ece5;
+    padding: 22px 36px 26px;
+    text-align: center;
+  }
+
+  .rsvp-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 6px;
+  }
+
+  .rsvp-q {
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-style: italic;
+    color: #333;
+    margin-bottom: 18px;
+  }
+
+  .btns { display: flex; flex-direction: column; gap: 9px; }
+
+  .rbtn {
+    background: #f7f4ef;
+    border: 1px solid #ccc;
+    color: #444;
+    padding: 12px 16px;
+    font-family: 'Lora', serif;
+    font-size: 14px;
+    font-style: italic;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 1px;
+  }
+  .rbtn:hover { background: #e8e3da; border-color: #aaa; }
+  .rbtn.sel-yes  { background: #2a2a2a; border-color: #2a2a2a; color: #f7f4ef; }
+  .rbtn.sel-no   { background: #888; border-color: #888; color: #fff; }
+  .rbtn.sel-maybe{ background: #b0a898; border-color: #b0a898; color: #fff; }
+
+  /* Thank you */
+  .ty {
+    display: none;
+    animation: fadeUp 0.4s ease;
+    padding: 6px 0;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .ty-icon { font-size: 30px; margin-bottom: 8px; }
+  .ty-msg  { font-family:'Lora',serif; font-size:19px; font-style:italic; color:#333; margin-bottom:4px; }
+  .ty-sub  { font-size:12px; color:#999; font-family:'Montserrat',sans-serif; letter-spacing:1px; }
+  .change-r { margin-top:12px; background:none; border:none; color:#aaa; font-size:10px; letter-spacing:1.5px; font-family:'Montserrat',sans-serif; cursor:pointer; text-transform:uppercase; text-decoration:underline; }
+
+  /* Stats */
+  .stats-label {
+    text-align:center;
+    font-family:'Montserrat',sans-serif;
+    font-size:9px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:#bbb;
+    padding: 12px 0 0;
+    background: #e8e4dc;
+    border-top: 1px solid #ddd;
+  }
+
+  .stats {
+    background: #e8e4dc;
+    padding: 8px 36px 14px;
+    display: flex;
+    justify-content: space-around;
+  }
+  .s-item { text-align:center; }
+  .s-num {
+    font-family:'Playfair Display',serif;
+    font-size:28px;
+    color:#333;
+    line-height:1;
+  }
+  .s-lbl {
+    font-family:'Montserrat',sans-serif;
+    font-size:9px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:#999;
+    margin-top:3px;
+  }
+</style>
+</head>
+<body>
+<div class="bg-blur"></div>
+<div class="outer">
+<div class="card">
+
+  <div class="card-header">
+    <div class="nos-casamos">¡NOS CASAMOS!</div>
+  </div>
+
+  <!-- Photo -->
+  <div class="photo-wrap" id="photoWrap" onclick="document.getElementById('fileInput').click()">
+    <div class="photo-placeholder" id="placeholder">
+      <div class="ph-icon">📷</div>
+      <div class="ph-text">Toca para añadir<br>vuestra foto</div>
+    </div>
+    <img id="couplePhoto" src="" alt="Foto de los novios" style="display:none">
+    <button class="change-photo-btn" id="changePhotoBtn" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">✎ Cambiar foto</button>
+    <input type="file" id="fileInput" accept="image/*" onchange="loadPhoto(event)">
+  </div>
+
+  <!-- Body -->
+  <div class="card-body">
+    <div style="height:18px"></div>
+    <p class="invite-text">Y queremos que nos acompañes en<br>este día tan especial para nosotros</p>
+
+    <div class="divider-floral">✦</div>
+
+    <p class="date-venue">
+      El día <strong>06 de Diciembre de 2026</strong><br>
+      a partir de las <strong>12:30 h</strong><br>
+      en la <strong>Hacienda Los Ángeles</strong>, Sevilla
+    </p>
+
+    <p class="small-note">Rogamos que no asistan menores a la celebración</p>
+  </div>
+
+
+
+  <!-- RSVP -->
+  <div class="rsvp-wrap">
+    <p class="rsvp-label">Confirmación de asistencia</p>
+    <p class="rsvp-q">¿Podrás acompañarnos en nuestro día?</p>
+
+    <div class="btns" id="btns">
+      <button class="rbtn" onclick="vote('yes',this)">🥂 &nbsp;Sí, allí estaré</button>
+      <button class="rbtn" onclick="vote('maybe',this)">🤔 &nbsp;Todavía no lo tengo claro</button>
+      <button class="rbtn" onclick="vote('no',this)">💌 &nbsp;No podré asistir, lo siento</button>
+    </div>
+
+    <div class="ty" id="ty">
+      <div class="ty-icon" id="tyIcon"></div>
+      <div class="ty-msg"  id="tyMsg"></div>
+      <div class="ty-sub"  id="tySub"></div>
+      <button class="change-r" onclick="changeVote()">Cambiar respuesta</button>
+    </div>
+  </div>
+
+  <!-- Hidden stats (private) -->
+  <div style="text-align:center; padding: 10px 0 6px; background:#f7f4ef;">
+    <button onclick="toggleStats()" style="background:none;border:none;cursor:pointer;font-size:13px;color:#ccc;letter-spacing:2px;font-family:'Montserrat',sans-serif;" title="Solo para los novios">🔒</button>
+  </div>
+
+  <div id="statsPanel" style="display:none;">
+    <div id="pinBox" style="background:#f0ece5;border-top:1px solid #ddd;padding:16px 36px 18px;text-align:center;">
+      <p style="font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#bbb;margin-bottom:10px;">Acceso privado</p>
+      <input id="pinInput" type="password" placeholder="Contraseña" maxlength="20"
+        style="border:1px solid #ccc;background:#fff;padding:9px 14px;font-family:'Lora',serif;font-size:14px;text-align:center;width:160px;outline:none;border-radius:1px;"
+        onkeydown="if(event.key==='Enter') checkPin()">
+      <button onclick="checkPin()"
+        style="margin-left:8px;background:#2a2a2a;color:#fff;border:none;padding:9px 16px;font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:1px;">
+        Entrar
+      </button>
+      <p id="pinError" style="color:#c0392b;font-size:11px;font-family:'Lora',serif;font-style:italic;margin-top:8px;display:none;">Contraseña incorrecta</p>
+    </div>
+
+    <div id="statsBox" style="display:none;background:#e8e4dc;border-top:1px solid #ddd;">
+      <div style="text-align:center;font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#bbb;padding:12px 0 0;">Respuestas recibidas</div>
+      <div style="display:flex;justify-content:space-around;padding:8px 36px 14px;">
+        <div style="text-align:center;">
+          <div id="cYes" style="font-family:'Playfair Display',serif;font-size:28px;color:#333;line-height:1;">0</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#999;margin-top:3px;">Asistirán</div>
+        </div>
+        <div style="text-align:center;">
+          <div id="cMaybe" style="font-family:'Playfair Display',serif;font-size:28px;color:#333;line-height:1;">0</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#999;margin-top:3px;">Por confirmar</div>
+        </div>
+        <div style="text-align:center;">
+          <div id="cNo" style="font-family:'Playfair Display',serif;font-size:28px;color:#333;line-height:1;">0</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#999;margin-top:3px;">No asistirán</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding-bottom:12px;">
+        <button onclick="lockStats()" style="background:none;border:none;color:#bbb;font-size:10px;letter-spacing:1.5px;font-family:'Montserrat',sans-serif;cursor:pointer;text-transform:uppercase;text-decoration:underline;">🔒 Ocultar</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+  const SK = 'wedding_nj_counts';
+  const VK = 'wedding_nj_vote';
+  let counts = {yes:0,maybe:0,no:0};
+  let myVote = null;
+
+  // Load photo from storage
+  async function initPhoto() {
+    try {
+      const p = await window.storage.get('wedding_nj_photo');
+      if (p && p.value) {
+        showPhoto(p.value);
+      }
+    } catch(e){}
+  }
+
+  function loadPhoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const dataUrl = ev.target.result;
+      showPhoto(dataUrl);
+      try { await window.storage.set('wedding_nj_photo', dataUrl); } catch(er){}
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function showPhoto(src) {
+    const img = document.getElementById('couplePhoto');
+    const ph  = document.getElementById('placeholder');
+    const btn = document.getElementById('changePhotoBtn');
+    img.src = src;
+    img.style.display = 'block';
+    ph.style.display  = 'none';
+    btn.style.display = 'block';
+  }
+
+  async function loadVotes() {
+    try { const r = await window.storage.get(SK, true); if(r) counts = JSON.parse(r.value); } catch(e){}
+    try { const u = await window.storage.get(VK);       if(u) myVote = u.value; } catch(e){}
+    render();
+    if(myVote) showTy(myVote);
+  }
+
+  async function vote(type) {
+    if(myVote && counts[myVote]>0) counts[myVote]--;
+    counts[type]++;
+    myVote = type;
+    await window.storage.set(SK, JSON.stringify(counts), true);
+    await window.storage.set(VK, type);
+    render();
+    showTy(type);
+  }
+
+  function showTy(type) {
+    const m = {
+      yes:   {icon:'🥂', msg:'¡Nos alegra muchísimo!',   sub:'Te esperamos con los brazos abiertos.'},
+      maybe: {icon:'🤍', msg:'Lo entendemos perfectamente', sub:'Avísanos cuando lo tengas claro.'},
+      no:    {icon:'💌', msg:'Lo sentiremos mucho',        sub:'Os echaremos de menos ese día.'}
+    }[type];
+    document.getElementById('tyIcon').textContent = m.icon;
+    document.getElementById('tyMsg').textContent  = m.msg;
+    document.getElementById('tySub').textContent  = m.sub;
+    document.getElementById('btns').style.display = 'none';
+    document.getElementById('ty').style.display   = 'block';
+  }
+
+  function changeVote() {
+    document.getElementById('btns').style.display = 'flex';
+    document.getElementById('ty').style.display   = 'none';
+  }
+
+  const SECRET = 'natalia1206';
+
+  function toggleStats() {
+    const p = document.getElementById('statsPanel');
+    p.style.display = p.style.display === 'none' ? 'block' : 'none';
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinError').style.display = 'none';
+    document.getElementById('statsBox').style.display = 'none';
+    document.getElementById('pinBox').style.display = 'block';
+  }
+
+  function checkPin() {
+    const val = document.getElementById('pinInput').value;
+    if (val === SECRET) {
+      document.getElementById('pinBox').style.display = 'none';
+      document.getElementById('statsBox').style.display = 'block';
+      render();
+    } else {
+      document.getElementById('pinError').style.display = 'block';
+    }
+  }
+
+  function lockStats() {
+    document.getElementById('statsPanel').style.display = 'none';
+  }
+
+  function render() {
+    document.getElementById('cYes').textContent   = counts.yes;
+    document.getElementById('cMaybe').textContent = counts.maybe;
+    document.getElementById('cNo').textContent    = counts.no;
+  }
+
+  initPhoto();
+  loadVotes();
+</script>
+</body>
+</html>
